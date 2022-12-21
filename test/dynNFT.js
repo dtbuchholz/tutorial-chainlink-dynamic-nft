@@ -15,7 +15,7 @@ before(async function () {
 });
 
 describe("dynNFT", function () {
-  // An example test to check that an NFT was succesfully minted with the correct default metadata
+  // An example test to check that an NFT was successfully minted with the correct default metadata
   it("Should return the token URI for minted token", async function () {
     // Deploy the dynNFT contract
     const baseURI = "http://localhost:8080/query?extract=true&unwrap=true&s=";

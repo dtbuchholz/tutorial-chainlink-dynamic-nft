@@ -37,7 +37,7 @@ To make this possible, a `.env` file should be created, with values `POLYGON_MUM
 └── dynNFT.js
 ```
 
-## Usage
+# Usage
 
 Locally develop using `local-tableland` by running the following in separate terminal windows. First, Spin up a local instance of Tableland (as well as a hardhat local node) and then deploy the contract locally:
 
