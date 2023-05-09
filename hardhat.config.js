@@ -15,13 +15,13 @@ module.exports = {
   },
   networks: {
     // testnets
-    "ethereum-goerli": {
-      url: `https://eth-goerli.g.alchemy.com/v2/${
-        process.env.ETHEREUM_GOERLI_API_KEY ?? ""
+    "ethereum-sepolia": {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${
+        process.env.ETHEREUM_SEPOLIA_API_KEY ?? ""
       }`,
       accounts:
-        process.env.ETHEREUM_GOERLI_PRIVATE_KEY !== undefined
-          ? [process.env.ETHEREUM_GOERLI_PRIVATE_KEY]
+        process.env.ETHEREUM_SEPOLIA_PRIVATE_KEY !== undefined
+          ? [process.env.ETHEREUM_SEPOLIA_PRIVATE_KEY]
           : [],
     },
     "polygon-mumbai": {
