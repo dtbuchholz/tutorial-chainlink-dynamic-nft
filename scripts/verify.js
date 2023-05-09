@@ -5,7 +5,7 @@ require("@nomiclabs/hardhat-etherscan");
 async function main() {
   await run("verify:verify", {
     address: contractAddress,
-    constructorArguments: [tablelandHost.testnet],
+    constructorArguments: [tablelandHost.testnets],
   });
 }
 

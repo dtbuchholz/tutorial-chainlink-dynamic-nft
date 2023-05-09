@@ -4,14 +4,14 @@ async function main() {
   const [account] = await ethers.getSigners();
   // We get the contract to deploy
   const DynNFT = await hre.ethers.getContractFactory("dynNFT");
-  // Tableland gateway -- we'll only need `localhost` or `testnet` gateways, but a `mainnet` option is in the config
+  // Tableland gateway -- we'll only need `localhost` or `testnets` gateways, but a `mainnet` option is in the config
   let baseURIString =
     network.name === "localhost"
       ? tablelandHost.localhost
-      : tablelandHost.testnet;
+      : tablelandHost.testnets;
   // Note the base URI has `extract=true`, `unwrap=true`, and `s` (for the SQL)
   // These are needed for creating ERC-721 compliant metadata
-  // The end result will look something like `https://testnets.tableland.network/query?extract=true&unwrap=true&s=`
+  // The end result will look something like `https://testnets.tableland.network/api/v1/query?extract=true&unwrap=true&statement=`
 
   // Deploy the NFT with the base URI defined
   const dynNFT = await DynNFT.deploy(baseURIString);

@@ -34,11 +34,11 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
     }
 
     /**
-     * @dev Intializes Tableland tables that track & compose NFT metadata
+     * @dev Initializes Tableland tables that track & compose NFT metadata
      */
     function initTables() public onlyOwner {
-        // Create a "flowers" table to track a predefined set of NFT traits, which will be composed based on VRF-mutatated `stage`
-        _flowersTableId = TablelandDeployments.get().createTable(
+        // Create a "flowers" table to track a predefined set of NFT traits, which will be composed based on VRF-mutated `stage`
+        _flowersTableId = TablelandDeployments.get().create(
             address(this),
             SQLHelpers.toCreateFromSchema(
                 "id int primary key," // An ID for the trait row
@@ -54,7 +54,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         values[1] = "1,'purple_seedling','purple','QmRkq5EeKE5wKAuZNjaDFxtqpLQP3cFJVVWNu3sqy452uA'";
         values[2] = "2,'purple_blooms','purple','QmRkq5EeKE5wKAuZNjaDFxtqpLQP3cFJVVWNu3sqy452uA'";
         // Insert these values into the flowers table
-        TablelandDeployments.get().runSQL(
+        TablelandDeployments.get().mutate(
             address(this),
             _flowersTableId,
             SQLHelpers.toBatchInsert(
@@ -66,7 +66,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
             )
         );
         // Create a "tokens" table to track the NFT token ID and its corresponding flower stage ID
-        _tokensTableId = TablelandDeployments.get().createTable(
+        _tokensTableId = TablelandDeployments.get().create(
             address(this),
             SQLHelpers.toCreateFromSchema(
                 "id int primary key," // Track the NFT token ID
@@ -77,7 +77,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
     }
 
     /**
-     * @dev Chailink VRF function that gets called upon a defined time interval within Chainlink's Upkeep setup
+     * @dev Chainlink VRF function that gets called upon a defined time interval within Chainlink's Upkeep setup
      */
     function checkUpkeep(
         bytes calldata /* checkData */
@@ -124,7 +124,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         _safeMint(to, tokenId);
         // Insert the metadata into the "tokens" Tableland table with a default "seed" value
         // The seed is in the "flowers" table with a stage ID of `0` -- insert the token ID and this stage ID
-        TablelandDeployments.get().runSQL(
+        TablelandDeployments.get().mutate(
             address(this),
             _tokensTableId,
             SQLHelpers.toInsert(
@@ -143,7 +143,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
     }
 
     /**
-     * @dev Grow the flower -- that is, mutatate the NFT's `stage` to the next available stage
+     * @dev Grow the flower -- that is, mutate the NFT's `stage` to the next available stage
      * 
      * _tokenId - the token ID to mutate
      */
@@ -157,7 +157,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         // Update the stage within the `stage` mapping
         stage[_tokenId] = newVal;
         // Update the stage within the Tableland "tokens" table, where the `stage_id` will change the `tokenURI` metadata response
-        TablelandDeployments.get().runSQL(
+        TablelandDeployments.get().mutate(
             address(this),
             _tokensTableId,
             SQLHelpers.toUpdate(
@@ -253,9 +253,9 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         string memory flowersTable = SQLHelpers.toNameFromId(_FLOWERS_TABLE_PREFIX, _flowersTableId);
         // Create the read query noted above, which forms the ERC-721 compliant metadata
         string memory query = string.concat(
-            "select%20json_object('name'%2C'Friendship%20Seed%20%23'%7C%7C",
+            "select%20json_object%28'name'%2C'Friendship%20Seed%20%23'%7C%7C",
             tokensTable,
-            ".id%2C'image'%2C'ipfs%3A%2F%2F'%7C%7Ccid%7C%7C'%2F'%7C%7Cstage%7C%7C'.jpg'%2C'attributes'%2Cjson_array(json_object('display_type'%2C'string'%2C'trait_type'%2C'Flower%20Stage'%2C'value'%2Cstage)%2Cjson_object('display_type'%2C'string'%2C'trait_type'%2C'Flower%20Color'%2C'value'%2Ccolor)))%20from%20",
+            ".id%2C'image'%2C'ipfs%3A%2F%2F'%7C%7Ccid%7C%7C'%2F'%7C%7Cstage%7C%7C'.jpg'%2C'attributes'%2Cjson_array%28json_object%28'display_type'%2C'string'%2C'trait_type'%2C'Flower%20Stage'%2C'value'%2Cstage%29%2Cjson_object%28'display_type'%2C'string'%2C'trait_type'%2C'Flower%20Color'%2C'value'%2Ccolor%29%29%29%20from%20",
             tokensTable,
             "%20join%20",
             flowersTable,

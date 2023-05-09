@@ -2,9 +2,9 @@
 
 Tableland + [Chainlink Automation](https://docs.chain.link/chainlink-automation/introduction/) to create dynamic NFTs.
 
-# Background
+## Background
 
-## Overview
+### Overview
 
 This tutorial reproduces the Chainlink [dNFT tutorial](https://docs.chain.link/chainlink-automation/util-overview#dynamic-nfts), but instead of static `tokenURI` switching, it uses Tableland and mutable tables to dynamically change the metadata. At specific intervals, the Chainlink network makes on-chain calls that mutate the current state of the NFT's metadata. What's unique from the original example is the usage writing to / reading from Tableland tables.
 
@@ -16,7 +16,7 @@ This tutorial deploys on the Polygon Mumbai testnet and uses Alchemy. As such, b
 
 For a full walkthrough, see the following documentation: [here](https://docs.tableland.xyz/dynamic-nft-with-chainlink-automation)
 
-## Project Structure
+### Project structure
 
 There exists the `dynNFT.sol` contract, which inherits from the Chainlink [`AutomationCompatible`](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/AutomationCompatible.sol) contract, as well as some other useful ones. There exists a `deploy.js` script (for deploying the NFT to a testnet) and a `verify.js` script to then verify the source code.
 
@@ -37,7 +37,7 @@ To make this possible, a `.env` file should be created, with values `POLYGON_MUM
 └── dynNFT.js
 ```
 
-# Usage
+## Usage
 
 Locally develop using `local-tableland` by running the following in separate terminal windows. First, Spin up a local instance of Tableland (as well as a hardhat local node) and then deploy the contract locally:
 
@@ -66,7 +66,7 @@ npx hardhat text
 
 If you'd like to use additional testnets or mainnets, simply update the `hardhat.config.js` and `.env` files accordingly.
 
-# Output
+### Output
 
 - Source Code: [here](https://gist.github.com/dtbuchholz/c2c35b595dabddf04374d2edd97b601a)
 - Deployed contract: [here](https://mumbai.polygonscan.com/token/0x86aa63f233a41a4af09e28f5953f4aa627978e31)

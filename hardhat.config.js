@@ -49,10 +49,12 @@ module.exports = {
   },
   config: {
     tablelandHost: {
-      localhost: "http://localhost:8080/query?extract=true&unwrap=true&s=",
-      testnet:
-        "https://testnets.tableland.network/query?extract=true&unwrap=true&s=",
-      mainnet: "https://tableland.network/query?extract=true&unwrap=true&s=",
+      localhost:
+        "http://localhost:8080/api/v1/query?extract=true&unwrap=true&statement=",
+      testnets:
+        "https://testnets.tableland.network/api/v1/query?extract=true&unwrap=true&statement=",
+      mainnet:
+        "https://tableland.network/api/v1/query?extract=true&unwrap=true&statement=",
     },
     contractAddress: "0x86AA63f233a41a4af09E28f5953f4Aa627978e31", // Replace with deployed contract address
   },
