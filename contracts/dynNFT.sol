@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.10 <0.9.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-import "@tableland/evm/contracts/utils/SQLHelpers.sol";
-import "@tableland/evm/contracts/utils/TablelandDeployments.sol";
-import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {SQLHelpers} from "@tableland/evm/contracts/utils/SQLHelpers.sol";
+import {TablelandDeployments} from "@tableland/evm/contracts/utils/TablelandDeployments.sol";
+import {AutomationCompatible} from "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 
 /**
  * @dev A dynamic NFT, built with Tableland and Chainlink VRF for mutating an NFT at some time interval
  */
-contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
+contract DynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
     // General dNFT and Chainlink data
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter; // Counter for the current token ID
-    uint256 lastTimeStamp; // Most recent timestamp at which the collection was updated
-    uint256 interval; // Time (in seconds) for how frequently the NFTs should change
+    uint256 private lastTimeStamp; // Most recent timestamp at which the collection was updated
+    uint256 private interval; // Time (in seconds) for how frequently the NFTs should change
     mapping(uint256=>uint256) public stage; // Track the token ID to its current stage
     // Tableland-specific information
     uint256 private _flowersTableId; // A table ID -- stores NFT attributes
@@ -27,10 +27,10 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
     string private constant _TOKENS_TABLE_PREFIX = "tokens"; // Table prefix for the tokens table
     string private _baseURIString; // The Tableland gateway URL
 
-    constructor(string memory baseURIString) ERC721("dNFTs", "dNFT") {
+    constructor() ERC721("dNFTs", "dNFT") {
         interval = 30; // Hardcode some interval value (in seconds) for when the dynamic NFT should "grow" into the next stage
         lastTimeStamp = block.timestamp; // Track the most recent timestamp for when a dynamic VRF update occurred
-        _baseURIString = baseURIString;
+        _baseURIString = TablelandDeployments.getBaseURI();
     }
 
     /**
@@ -48,7 +48,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
                 _FLOWERS_TABLE_PREFIX // Prefix (human readable name) for the table
             )
         );
-        // Initalize values for the flowers table -- do this by creating an array of comma separated string values for each row
+        // Initialize values for the flowers table -- do this by creating an array of comma separated string values for each row
         string[] memory values = new string[](3);
         values[0] = "0,'seed','unknown','QmNpAiQZjkoLCb3MRR8jFJEDpw7YWcSSGMPLzyU5rvNTNg'"; // Notice the single quotes around text
         values[1] = "1,'purple_seedling','purple','QmRkq5EeKE5wKAuZNjaDFxtqpLQP3cFJVVWNu3sqy452uA'";
@@ -80,17 +80,21 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
      * @dev Chainlink VRF function that gets called upon a defined time interval within Chainlink's Upkeep setup
      */
     function checkUpkeep(
-        bytes calldata /* checkData */
+    bytes calldata /* checkData */
     )
         external
         view
         returns (
             bool upkeepNeeded,
-            bytes memory /* performData */
+            bytes memory performData
         )
     {
         upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
         // We don't use the `checkData` in this example. The `checkData` is defined when the Upkeep was registered.
+        
+        performData = ""; // or some other appropriate default value for your use case
+        
+        return (upkeepNeeded, performData);
     }
 
     /**
@@ -124,6 +128,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         _safeMint(to, tokenId);
         // Insert the metadata into the "tokens" Tableland table with a default "seed" value
         // The seed is in the "flowers" table with a stage ID of `0` -- insert the token ID and this stage ID
+        uint256 seedStage = 0;
         TablelandDeployments.get().mutate(
             address(this),
             _tokensTableId,
@@ -136,7 +141,7 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
                 string.concat(
                     Strings.toString(tokenId),
                     ",",
-                    Strings.toString(0) // Value of `seed` is at `stage_id` `0`
+                    Strings.toString(seedStage) // Value of `seed` is at `stage_id` `0`
                 )
             )
         );
@@ -202,10 +207,12 @@ contract dynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         // Ensure the token exists
         require(
             _exists(tokenId),
-            "ERC721Metadata: URI query for nonexistent token"
+            "URI query for nonexistent token"
         );
         // Set the `baseURI`
-        string memory baseURI = _baseURI();
+        // Here, we attach `query?extract=true&unwrap=true&statement=` to make
+        // sure the response is ERC721 metadata compliant
+        string memory baseURI = string.concat(_baseURI(),"query?extract=true&unwrap=true&statement=");
         if (bytes(baseURI).length == 0) {
             return "";
         }

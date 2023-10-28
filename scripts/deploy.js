@@ -1,23 +1,19 @@
-const { ethers, network, tablelandHost } = require("hardhat");
+const { ethers } = require("hardhat");
 
 async function main() {
   const [account] = await ethers.getSigners();
   // We get the contract to deploy
-  const DynNFT = await hre.ethers.getContractFactory("dynNFT");
-  // Tableland gateway -- we'll only need `localhost` or `testnets` gateways, but a `mainnet` option is in the config
-  let baseURIString =
-    network.name === "localhost"
-      ? tablelandHost.localhost
-      : tablelandHost.testnets;
+  const DynNFT = await ethers.getContractFactory("DynNFT");
   // Note the base URI has `extract=true`, `unwrap=true`, and `s` (for the SQL)
   // These are needed for creating ERC-721 compliant metadata
   // The end result will look something like `https://testnets.tableland.network/api/v1/query?extract=true&unwrap=true&statement=`
 
-  // Deploy the NFT with the base URI defined
-  const dynNFT = await DynNFT.deploy(baseURIString);
+  // Deploy the NFT—note the Tableland gateway base URI is defined automatically
+  // by the contract for the respective network
+  const dynNFT = await DynNFT.deploy();
   await dynNFT.deployed();
   // Log the address and save this for verification purposes
-  console.log("dynNFT deployed to:", dynNFT.address);
+  console.log("DynNFT deployed to:", dynNFT.address);
 
   // Initialize the Tableland tables
   let tx = await dynNFT.initTables();
@@ -26,9 +22,9 @@ async function main() {
   // For demonstration purposes, mint an NFT and log its token URI
   tx = await dynNFT.mint(account.address);
   receipt = await tx.wait();
-  let [event] = receipt.events ?? [];
-  let tokenId = event.args?.tokenId;
-  let tokenUri = await dynNFT.tokenURI(tokenId);
+  const [event] = receipt.events ?? [];
+  const tokenId = event.args?.tokenId;
+  const tokenUri = await dynNFT.tokenURI(tokenId);
   console.log(tokenUri);
 }
 

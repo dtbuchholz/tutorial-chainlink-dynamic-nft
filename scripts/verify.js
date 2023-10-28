@@ -1,5 +1,5 @@
 // Standard `ethers` import for blockchain operations, plus `network` for logging the flagged network
-const { ethers, network, tablelandHost, contractAddress } = require("hardhat");
+const { tablelandHost, contractAddress } = require("hardhat");
 require("@nomiclabs/hardhat-etherscan");
 
 async function main() {
