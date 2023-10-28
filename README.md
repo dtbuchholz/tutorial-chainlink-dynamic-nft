@@ -10,7 +10,7 @@ This tutorial reproduces the Chainlink [dNFT tutorial](https://docs.chain.link/c
 
 Instead of solely using IPFS to store all of the metadata, pointers to IPFS (CIDs) and filepaths are stored in tables. The outdated decentralized approach toward dNFTs (switching the `tokenURI` to a new IPFS metadata file) is replaced with storing only a subset of that original data in tables, and metadata mutations happen using on-chain actions. The example keeps things simple, but further extensions could allow for extending the metadata options (e.g., new colors, images, etc.) without changing the `tokenURI` / `baseURI` (i.e., no need to update storage references).
 
-In regards to Chainlink, [Upkeep](https://docs.chain.link/chainlink-automation/manage-upkeeps/) is used to register the `dynNFT` contract; the funding is done through transferring LINK to the contract (i.e., not in the Upkeep UI). At a defined `interval`, the Chainlink network will call `checkUpkeep`, and if certain conditions are met, it will mutate the NFT by calling `performUpkeep`, which changes the Tableland table values.
+In regards to Chainlink, [Upkeep](https://docs.chain.link/chainlink-automation/manage-upkeeps/) is used to register the `DynNFT` contract; the funding is done through transferring LINK to the contract (i.e., not in the Upkeep UI). At a defined `interval`, the Chainlink network will call `checkUpkeep`, and if certain conditions are met, it will mutate the NFT by calling `performUpkeep`, which changes the Tableland table values.
 
 This tutorial deploys on the Polygon Mumbai testnet and uses Alchemy. As such, be sure to sign up for an Alchemy account and (optionally) a Polygonscan account. These are further explained below.
 
@@ -18,14 +18,16 @@ For a full walkthrough, see the following documentation: [here](https://docs.tab
 
 ### Project structure
 
-There exists the `dynNFT.sol` contract, which inherits from the Chainlink [`AutomationCompatible`](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/AutomationCompatible.sol) contract, as well as some other useful ones. There exists a `deploy.js` script (for deploying the NFT to a testnet) and a `verify.js` script to then verify the source code.
+There exists the `DynNFT.sol` contract, which inherits from the Chainlink [`AutomationCompatible`](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/AutomationCompatible.sol) contract, as well as some other useful ones. There exists a `deploy.js` script (for deploying the NFT to a testnet) and a `verify.js` script to then verify the source code.
 
-To make this possible, a `.env` file should be created, with values `POLYGON_MUMBAI_PRIVATE_KEY`, `POLYGON_MUMBAI_API_KEY`, and `POLYGONSCAN_API_KEY` (or similar if you're using other chains). This includes an EVM account private key, an Alchemy API key for Polygon Mumbai (for deploying to testnet), and a Polygonscan API key (for verification). There's also a `test/dynNFT.js` script for a simple testing example. Lastly, some configuration is done in `hardhat.config.js` to make it easier to develop.
+To make this possible, a `.env` file should be created, with values `POLYGON_MUMBAI_PRIVATE_KEY`, `POLYGON_MUMBAI_API_KEY`, and `POLYGONSCAN_API_KEY` (or similar if you're using other chains). This includes an EVM account private key, an Alchemy API key for Polygon Mumbai (for deploying to testnet), and a Polygonscan API key (for verification). There's also a `test/DynNFT.js` script for a simple testing example. Lastly, some configuration is done in `hardhat.config.js` to make it easier to develop.
+
+<!--prettier ignore-->
 
 ```markdown
 .
 ├── contracts
-│   └── dynNFT.sol
+│   └── DynNFT.sol
 ├── hardhat.config.js
 ├── package-lock.json
 ├── package.json
@@ -34,7 +36,7 @@ To make this possible, a `.env` file should be created, with values `POLYGON_MUM
 │   └── verify.js
 ├── .env
 └── test
-└── dynNFT.js
+└── DynNFT.js
 ```
 
 ## Usage
@@ -42,7 +44,7 @@ To make this possible, a `.env` file should be created, with values `POLYGON_MUM
 First, clone this repo:
 
 ```sh
-git clone https://github.com/tablelandnetwork/hardhat-js-tableland-template
+git clone https://github.com/dtbuchholz/tutorial-chainlink-dynamic-nft
 ```
 
 ### Build & deploy

@@ -4,7 +4,6 @@ const { baseURIs } = require("@tableland/evm/network");
 
 // Deploy the TablelandTables registry contract to allow for tables to be minted
 before(async function () {
-  console.log(baseURIs);
   const TablelandTablesFactory = await ethers.getContractFactory(
     "TablelandTables"
   );
