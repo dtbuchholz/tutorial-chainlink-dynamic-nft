@@ -1,5 +1,24 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "build": "hardhat compile",
+    "clean": "hardhat clean && rm -rf artifacts && rm -rf cache",
+    "up": "npm install && npm run build && hardhat node --network local-tableland",
+    "lt": "hardhat node --network local-tableland",
+    "deploy": "hardhat run scripts/deploy.js --network",
+    "deploy:up": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:local": "hardhat run scripts/deploy.js --network local-tableland",
+    "verify": "hardhat run scripts/verify.js --network",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true npm run test",
+    "lint:js": "eslint '**/*.{js,ts}'",
+    "lint:sol": "solhint 'contracts/**/*.sol'",
+    "lint": "npm run lint:js && npm run lint:sol",
+    "lint:fix": "npm run lint:js -- --fix && npm run lint:sol -- --fix",
+    "prettier": "prettier '**/*.{js,ts,json,sol,md}' --check",
+    "prettier:fix": "npm run prettier -- --write",
+    "format": "npm run prettier:fix && npm run lint:fix"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
@@ -7,11 +26,15 @@
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts-upgradeable": "^4.8.0",
     "@openzeppelin/hardhat-upgrades": "^1.22.0",
-    "@tableland/local": "^1.2.2",
+    "@tableland/hardhat": "^0.0.6",
+    "@tableland/local": "^2.1.0",
     "@typechain/ethers-v5": "^10.1.1",
     "@typechain/hardhat": "^6.1.4",
     "dotenv": "^16.0.3",
     "erc721a-upgradeable": "^4.2.3",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-standard": "^17.1.0",
     "ethers": "^5.7.2",
     "hardhat": "^2.12.2",
     "hardhat-dependency-compiler": "^1.1.3",
@@ -26,6 +49,6 @@
   "dependencies": {
     "@chainlink/contracts": "^0.5.1",
     "@openzeppelin/contracts": "^4.8.0",
-    "@tableland/evm": "^4.2.2"
+    "@tableland/evm": "^4.4.0"
   }
 }

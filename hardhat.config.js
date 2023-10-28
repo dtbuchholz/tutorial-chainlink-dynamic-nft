@@ -3,15 +3,28 @@ const { extendEnvironment } = require("hardhat/config");
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-dependency-compiler");
 require("@openzeppelin/hardhat-upgrades");
+require("@tableland/hardhat");
 dotenv.config();
 
 module.exports = {
-  solidity: "0.8.17",
+  solidity: {
+    version: "0.8.19",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
   dependencyCompiler: {
     paths: [
       // For testing purposes
       "@tableland/evm/contracts/TablelandTables.sol",
     ],
+  },
+  localTableland: {
+    silent: false,
+    verbose: false,
   },
   networks: {
     // testnets
@@ -33,7 +46,6 @@ module.exports = {
           ? [process.env.POLYGON_MUMBAI_PRIVATE_KEY]
           : [],
     },
-    // devnets
     hardhat: {
       mining: {
         auto: !(process.env.HARDHAT_DISABLE_AUTO_MINING === "true"),
@@ -48,14 +60,6 @@ module.exports = {
     customChains: [],
   },
   config: {
-    tablelandHost: {
-      localhost:
-        "http://localhost:8080/api/v1/query?extract=true&unwrap=true&statement=",
-      testnets:
-        "https://testnets.tableland.network/api/v1/query?extract=true&unwrap=true&statement=",
-      mainnet:
-        "https://tableland.network/api/v1/query?extract=true&unwrap=true&statement=",
-    },
     contractAddress: "0x86AA63f233a41a4af09E28f5953f4Aa627978e31", // Replace with deployed contract address
   },
 };
