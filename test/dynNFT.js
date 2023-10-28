@@ -1,9 +1,10 @@
 const { expect } = require("chai");
 const { ethers, upgrades, network } = require("hardhat");
-const { TablelandTables } = require("@tableland/evm");
+const { baseURIs } = require("@tableland/evm/network");
 
 // Deploy the TablelandTables registry contract to allow for tables to be minted
 before(async function () {
+  console.log(baseURIs);
   const TablelandTablesFactory = await ethers.getContractFactory(
     "TablelandTables"
   );
@@ -14,18 +15,17 @@ before(async function () {
   ).deployed();
 });
 
-describe("dynNFT", function () {
+describe("DynNFT", function () {
   // An example test to check that an NFT was successfully minted with the correct default metadata
   it("Should return the token URI for minted token", async function () {
     // Deploy the dynNFT contract
-    const baseURI = "http://localhost:8080/query?extract=true&unwrap=true&s=";
-    const dNFT = await ethers.getContractFactory("dynNFT");
-    const dnft = await dNFT.deploy(baseURI);
+    const DynNFT = await ethers.getContractFactory("DynNFT");
+    const dnft = await DynNFT.deploy();
     await dnft.deployed();
     // Initialized the two tables
     let tx = await dnft.initTables();
     let receipt = await tx.wait();
-    let events = receipt.events ?? [];
+    const events = receipt.events ?? [];
     // Get both TablelandTables transfer events ("flowers" is minted before "tokens")
     const transfers = events.filter((v) => v.event === "Transfer");
     const tableIdFlowers = transfers[0].args?.tokenId;
@@ -43,6 +43,8 @@ describe("dynNFT", function () {
       `select json_object('name','Friendship Seed #'||${tokensTable}.id,'image','ipfs://'||cid||'/'||stage||'.jpg','attributes',json_array(json_object('display_type','string','trait_type','Flower Stage','value',stage),json_object('display_type','string','trait_type','Flower Color','value',color))) from ${tokensTable} join ${flowersTable} on ${tokensTable}.stage_id = ${flowersTable}.id where ${tokensTable}.id=${tokenId} group by ${tokensTable}.id`
     );
     // Check the `tokenURI` is correct for the minted token
-    expect(await dnft.tokenURI(tokenId)).to.equal(`${baseURI}${query}`);
+    expect(await dnft.tokenURI(tokenId)).to.equal(
+      `${baseURIs["local-tableland"]}query?extract=true&unwrap=true&statement=${query}`
+    );
   });
 });
