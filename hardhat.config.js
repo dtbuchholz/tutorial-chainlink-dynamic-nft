@@ -60,7 +60,7 @@ module.exports = {
     customChains: [],
   },
   config: {
-    contractAddress: "0x86AA63f233a41a4af09E28f5953f4Aa627978e31", // Replace with deployed contract address
+    contractAddress: "0xD91f9cDdBF68Ad1bF97aCC9bA83ea115bF506232", // Replace with deployed contract address
   },
 };
 

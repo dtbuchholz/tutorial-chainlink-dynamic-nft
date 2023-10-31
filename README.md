@@ -6,9 +6,9 @@ Tableland + [Chainlink Automation](https://docs.chain.link/chainlink-automation/
 
 ### Overview
 
-This tutorial reproduces the Chainlink [dNFT tutorial](https://docs.chain.link/chainlink-automation/util-overview#dynamic-nfts), but instead of static `tokenURI` switching, it uses Tableland and mutable tables to dynamically change the metadata. At specific intervals, the Chainlink network makes on-chain calls that mutate the current state of the NFT's metadata. What's unique from the original example is the usage writing to / reading from Tableland tables.
+This tutorial reproduces the Chainlink [dNFT tutorial](https://docs.chain.link/chainlink-automation/util-overview#dynamic-nfts), but instead of static `tokenURI` switching, it uses Tableland and mutable tables to dynamically change the metadata. At specific intervals, the Chainlink network makes onchain calls that mutate the current state of the NFT's metadata. What's unique from the original example is the usage writing to / reading from Tableland tables.
 
-Instead of solely using IPFS to store all of the metadata, pointers to IPFS (CIDs) and filepaths are stored in tables. The outdated decentralized approach toward dNFTs (switching the `tokenURI` to a new IPFS metadata file) is replaced with storing only a subset of that original data in tables, and metadata mutations happen using on-chain actions. The example keeps things simple, but further extensions could allow for extending the metadata options (e.g., new colors, images, etc.) without changing the `tokenURI` / `baseURI` (i.e., no need to update storage references).
+Instead of solely using IPFS to store all of the metadata, pointers to IPFS (CIDs) and filepaths are stored in tables. The outdated decentralized approach toward dNFTs (switching the `tokenURI` to a new IPFS metadata file) is replaced with storing only a subset of that original data in tables, and metadata mutations happen using onchain actions. The example keeps things simple, but further extensions could allow for extending the metadata options (e.g., new colors, images, etc.) without changing the `tokenURI` / `baseURI` (i.e., no need to update storage references).
 
 In regards to Chainlink, [Upkeep](https://docs.chain.link/chainlink-automation/manage-upkeeps/) is used to register the `DynNFT` contract; the funding is done through transferring LINK to the contract (i.e., not in the Upkeep UI). At a defined `interval`, the Chainlink network will call `checkUpkeep`, and if certain conditions are met, it will mutate the NFT by calling `performUpkeep`, which changes the Tableland table values.
 
@@ -117,7 +117,6 @@ npm run format
 
 ### Output
 
-- Source Code: [here](https://gist.github.com/dtbuchholz/c2c35b595dabddf04374d2edd97b601a)
-- Deployed contract: [here](https://mumbai.polygonscan.com/token/0x86aa63f233a41a4af09e28f5953f4aa627978e31)
+- Deployed contract: [here](https://mumbai.polygonscan.com/token/0xD91f9cDdBF68Ad1bF97aCC9bA83ea115bF506232)
 - Dynamic NFT collection: [here](https://testnets.opensea.io/collection/tableland-chainlink-dnft)
-  - The “seed” NFT will grow into a “bloom” — all of these mutations are handled by on-chain table writes that are updated by the Chainlink network (example images [here](https://docs.tableland.xyz/dynamic-nft-with-chainlink-automation#dfbde22b303a41e597cc36eaacb7473d) as well as at the collection noted)
+  - The "seed" NFT will grow into a "bloom" — all of these mutations are handled by onchain table writes that are updated by the Chainlink network (example images [here](https://docs.tableland.xyz/tutorials/dynamic-nft-chainlink#end-result) as well as at the collection noted).
