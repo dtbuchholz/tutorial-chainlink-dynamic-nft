@@ -260,9 +260,9 @@ contract DynNFT is ERC721, IERC721Receiver, Ownable, AutomationCompatible {
         string memory flowersTable = SQLHelpers.toNameFromId(_FLOWERS_TABLE_PREFIX, _flowersTableId);
         // Create the read query noted above, which forms the ERC-721 compliant metadata
         string memory query = string.concat(
-            "select%20json_object%28'name'%2C'Friendship%20Seed%20%23'%7C%7C",
+            "select%20json_object('name'%2C'Friendship%20Seed%20%23'%7C%7C",
             tokensTable,
-            ".id%2C'image'%2C'ipfs%3A%2F%2F'%7C%7Ccid%7C%7C'%2F'%7C%7Cstage%7C%7C'.jpg'%2C'attributes'%2Cjson_array%28json_object%28'display_type'%2C'string'%2C'trait_type'%2C'Flower%20Stage'%2C'value'%2Cstage%29%2Cjson_object%28'display_type'%2C'string'%2C'trait_type'%2C'Flower%20Color'%2C'value'%2Ccolor%29%29%29%20from%20",
+            ".id%2C'image'%2C'ipfs%3A%2F%2F'%7C%7Ccid%7C%7C'%2F'%7C%7Cstage%7C%7C'.jpg'%2C'attributes'%2Cjson_array(json_object('display_type'%2C'string'%2C'trait_type'%2C'Flower%20Stage'%2C'value'%2Cstage)%2Cjson_object('display_type'%2C'string'%2C'trait_type'%2C'Flower%20Color'%2C'value'%2Ccolor)))%20from%20",
             tokensTable,
             "%20join%20",
             flowersTable,

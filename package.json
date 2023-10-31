@@ -28,6 +28,7 @@
     "@openzeppelin/hardhat-upgrades": "^1.22.0",
     "@tableland/hardhat": "^0.0.6",
     "@tableland/local": "^2.1.0",
+    "@tableland/sdk": "^4.5.3",
     "@typechain/ethers-v5": "^10.1.1",
     "@typechain/hardhat": "^6.1.4",
     "dotenv": "^16.0.3",
