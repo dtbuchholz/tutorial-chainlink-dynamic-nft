@@ -1,11 +1,10 @@
 // Standard `ethers` import for blockchain operations, plus `network` for logging the flagged network
-const { tablelandHost, contractAddress } = require("hardhat");
+const { contractAddress } = require("hardhat");
 require("@nomiclabs/hardhat-etherscan");
 
 async function main() {
   await run("verify:verify", {
     address: contractAddress,
-    constructorArguments: [tablelandHost.testnets],
   });
 }
 
